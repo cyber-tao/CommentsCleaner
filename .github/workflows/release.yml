@@ -40,12 +40,11 @@ jobs:
         run: |
           cd target/${{ matrix.target }}/release
           cp cclean ${{ matrix.name }}
-          tar -czf ${{ matrix.name }}.tar.gz ${{ matrix.name }}
-          mv ${{ matrix.name }}.tar.gz ../../../../
+          mv ${{ matrix.name }} ../../../../
           echo "Package binary completed, listing files:"
           ls -la ../../../../
           echo "Checking if file exists:"
-          test -f ../../../../${{ matrix.name }}.tar.gz && echo "File found" || echo "File not found"
+          test -f ../../../../${{ matrix.name }} && echo "File found" || echo "File not found"
 
       - name: Create Release and Upload
         uses: softprops/action-gh-release@v1
@@ -57,7 +56,7 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            *.tar.gz
+            ${{ matrix.name }}
 
   publish-cargo:
     runs-on: ubuntu-latest
