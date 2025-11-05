@@ -1,0 +1,71 @@
+# Release Configuration
+
+[release]
+# Default release targets
+targets = [
+    "x86_64-unknown-linux-gnu",
+    "x86_64-pc-windows-gnu", 
+    "x86_64-apple-darwin"
+]
+
+# Binary names for each target
+[target_names]
+x86_64-unknown-linux-gnu = "cclean-linux-x86_64"
+x86_64-pc-windows-gnu = "cclean-windows-x86_64.exe"
+x86_64-apple-darwin = "cclean-macos-x86_64"
+
+# Release settings
+[settings]
+# Whether to create GitHub releases automatically
+auto_create_release = true
+
+# Whether to publish to crates.io automatically
+auto_publish_cargo = false
+
+# Whether to strip binaries in release builds
+strip_binaries = true
+
+# Whether to create checksums
+create_checksums = true
+
+# Files to include in release (in addition to binaries)
+include_files = [
+    "README.md",
+    "LICENSE",
+    "QUICKSTART.md"
+]
+
+# Release templates
+[templates]
+# Release notes template
+release_notes = '''
+## Release {version}
+
+### Changes
+- {changes}
+
+### Downloads
+- Linux: cclean-linux-x86_64.tar.gz
+- Windows: cclean-windows-x86_64.exe.tar.gz  
+- macOS: cclean-macos-x86_64.tar.gz
+
+### Installation
+```bash
+# Download and extract
+tar -xzf cclean-{platform}.tar.gz
+./cclean --help
+```
+
+### Verification
+```bash
+# Verify checksums
+sha256sum -c sha256sums.txt
+```
+'''
+
+# Changelog entry template
+changelog_entry = '''
+### {version} - {date}
+
+{changes}
+'''

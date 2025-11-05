@@ -1,0 +1,56 @@
+# Rust build artifacts
+/target
+**/target/
+debug/
+release/
+
+# Cargo lock for libraries (remove if this is a binary)
+# Cargo.lock
+
+# Backup files
+**/*.rs.bk
+*.bak
+*.orig
+
+# Project specific
+*_cleaned.*
+/test_output
+examples
+
+# IDE and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.iml
+.project
+.classpath
+.settings/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+
+# Cargo
+Cargo.lock
+
+# RLS and rust-analyzer
+.rust-analyzer/
+.rustfmt.cache
+
+# Coverage reports
+*.profraw
+*.profdata
+tarpaulin-report.html
+cobertura.xml
+lcov.info
+
+# Benchmarking
+criterion/
+benchmark_results/

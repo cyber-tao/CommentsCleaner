@@ -1,0 +1,18 @@
+[package]
+name = "comments-cleaner"
+version = "0.1.0"
+edition = "2021"
+authors = ["Your Name <your.email@example.com>"]
+description = "A command-line tool for cleaning code comments, supporting multiple programming languages"
+license = "MIT"
+
+[[bin]]
+name = "cclean"
+path = "src/main.rs"
+
+[dependencies]
+clap = { version = "4.0", features = ["derive"] }
+regex = "1.9"
+walkdir = "2.3"
+anyhow = "1.0"
+colored = "2.0"
