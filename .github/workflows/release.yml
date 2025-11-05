@@ -57,7 +57,7 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            ${{ github.workspace }}/cclean-linux-x86_64.tar.gz
+            *.tar.gz
 
   publish-cargo:
     runs-on: ubuntu-latest
