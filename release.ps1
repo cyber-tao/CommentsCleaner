@@ -95,11 +95,9 @@ if (-not $DryRun) {
     (Get-Content Cargo.toml) -replace '^version = .*', "version = `"$Version`"" | Set-Content Cargo.toml
 }
 
-# Targets to build
+# Build targets - native Windows only
 $Targets = @(
-    @{ Target = "x86_64-unknown-linux-gnu"; Output = "cclean-linux-x86_64" }
-    @{ Target = "x86_64-pc-windows-gnu"; Output = "cclean-windows-x86_64.exe" }
-    @{ Target = "x86_64-apple-darwin"; Output = "cclean-macos-x86_64" }
+    @{ Target = "x86_64-pc-windows-msvc"; Output = "cclean-windows-x86_64.exe" }
 )
 
 # Create release directory
