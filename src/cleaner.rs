@@ -436,7 +436,7 @@ fn clean_basic_comments(content: &str) -> String {
             if ch == 'R' || ch == 'r' {
                 let mut temp = String::new();
                 temp.push(ch);
-                
+
                 let mut matched = true;
                 for expected in ['E', 'M'] {
                     if let Some(&next_ch) = chars.peek() {

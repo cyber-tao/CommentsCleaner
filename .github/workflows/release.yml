@@ -12,7 +12,51 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    outputs:
+      release_body: ${{ steps.changelog.outputs.changelog }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate changelog
+        id: changelog
+        shell: bash
+        run: |
+          CURRENT_TAG=${{ github.ref_name }}
+          PREV_TAG=$(git tag --sort=-version:refname | grep -v "^${CURRENT_TAG}$" | head -n 1)
+          
+          echo "Current tag: $CURRENT_TAG"
+          echo "Previous tag: $PREV_TAG"
+          
+          if [ -z "$PREV_TAG" ]; then
+            echo "No previous tag found, using all commits"
+            CHANGELOG=$(git log --pretty=format:"- %s (%h)" --no-merges)
+          else
+            echo "Generating changelog from $PREV_TAG to $CURRENT_TAG"
+            CHANGELOG=$(git log ${PREV_TAG}..${CURRENT_TAG} --pretty=format:"- %s (%h)" --no-merges)
+          fi
+          
+          echo "changelog<<EOF" >> $GITHUB_OUTPUT
+          echo "## Changes" >> $GITHUB_OUTPUT
+          echo "" >> $GITHUB_OUTPUT
+          echo "$CHANGELOG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          body: ${{ steps.changelog.outputs.changelog }}
+          draft: false
+          prerelease: false
+
   release:
+    needs: create-release
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -59,15 +103,10 @@ jobs:
           echo "Package binary completed: $OUTPUT_NAME"
           ls -lh $OUTPUT_NAME
 
-      - name: Create Release and Upload
+      - name: Upload Release Asset
         uses: softprops/action-gh-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.ref_name }}
-          name: Release ${{ github.ref_name }}
-          draft: false
-          prerelease: false
           files: ${{ env.OUTPUT_FILE }}
 
   publish-cargo:
