@@ -77,7 +77,9 @@ fn clean_c_style_comments(content: &str) -> String {
                 continue;
             }
             result.push(ch);
-            if !ch.is_whitespace() { prev_non_ws = Some(ch); }
+            if !ch.is_whitespace() {
+                prev_non_ws = Some(ch);
+            }
             continue;
         }
 
@@ -85,15 +87,21 @@ fn clean_c_style_comments(content: &str) -> String {
             result.push(ch);
             if escape_next {
                 escape_next = false;
-                if !ch.is_whitespace() { prev_non_ws = Some(ch); }
+                if !ch.is_whitespace() {
+                    prev_non_ws = Some(ch);
+                }
                 continue;
             }
             if ch == '`' {
                 in_template = false;
-                if !ch.is_whitespace() { prev_non_ws = Some(ch); }
+                if !ch.is_whitespace() {
+                    prev_non_ws = Some(ch);
+                }
                 continue;
             }
-            if !ch.is_whitespace() { prev_non_ws = Some(ch); }
+            if !ch.is_whitespace() {
+                prev_non_ws = Some(ch);
+            }
             continue;
         }
 
@@ -102,15 +110,19 @@ fn clean_c_style_comments(content: &str) -> String {
             if regex_escape_next {
                 regex_escape_next = false;
             } else {
-                if ch == '[' { in_regex_char_class = true; }
-                else if ch == ']' { in_regex_char_class = false; }
-                else if ch == '/' && !in_regex_char_class {
+                if ch == '[' {
+                    in_regex_char_class = true;
+                } else if ch == ']' {
+                    in_regex_char_class = false;
+                } else if ch == '/' && !in_regex_char_class {
                     in_regex = false;
                 } else if ch == '\\' {
                     regex_escape_next = true;
                 }
             }
-            if !ch.is_whitespace() { prev_non_ws = Some(ch); }
+            if !ch.is_whitespace() {
+                prev_non_ws = Some(ch);
+            }
             continue;
         }
 
@@ -156,13 +168,19 @@ fn clean_c_style_comments(content: &str) -> String {
                         let likely_regex_start = match prev {
                             None => true,
                             Some(p) => {
-                                !(p.is_ascii_alphanumeric() || p == ')' || p == ']' || p == '}' || p == '.')
+                                !(p.is_ascii_alphanumeric()
+                                    || p == ')'
+                                    || p == ']'
+                                    || p == '}'
+                                    || p == '.')
                             }
                         };
                         if likely_regex_start {
                             in_regex = true;
                             result.push(ch);
-                            if !ch.is_whitespace() { prev_non_ws = Some(ch); }
+                            if !ch.is_whitespace() {
+                                prev_non_ws = Some(ch);
+                            }
                             continue;
                         }
                     }
@@ -179,7 +197,9 @@ fn clean_c_style_comments(content: &str) -> String {
         }
 
         result.push(ch);
-        if !ch.is_whitespace() { prev_non_ws = Some(ch); }
+        if !ch.is_whitespace() {
+            prev_non_ws = Some(ch);
+        }
     }
 
     result
