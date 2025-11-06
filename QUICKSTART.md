@@ -3,7 +3,7 @@
 ## 1. Build the project
 
 ```bash
-cd CommentsCleaner
+cd comments-cleaner
 cargo build --release
 ```
 
@@ -105,7 +105,7 @@ A: Use the `-l` parameter to manually specify language, e.g.: `cclean myfile -l 
 Add to `~/.bashrc` or `~/.zshrc`:
 
 ```bash
-alias cclean='/path/to/CommentsCleaner/target/release/cclean'
+alias cclean='/path/to/comments-cleaner/target/release/cclean'
 ```
 
 ### Create alias (Windows PowerShell)
@@ -113,7 +113,7 @@ alias cclean='/path/to/CommentsCleaner/target/release/cclean'
 Add to PowerShell configuration file:
 
 ```powershell
-function cclean { & "C:\path\to\CommentsCleaner\target\release\cclean.exe" $args }
+function cclean { & "C:\path\to\comments-cleaner\target\release\cclean.exe" $args }
 ```
 
 ### Batch script example

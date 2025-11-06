@@ -1,4 +1,4 @@
-# Makefile for CommentsCleaner
+# Makefile for comments-cleaner
 
 .PHONY: help build test clean release install format clippy audit
 
@@ -78,7 +78,7 @@ ci: format clippy test
 
 # Show project info
 info:
-	@echo "Project: CommentsCleaner"
+	@echo "Project: comments-cleaner"
 	@echo "Version: $$(cargo metadata --no-deps --format-version 1 | jq -r '.packages[0].version')"
 	@echo "Rust toolchain: $$(rustc --version)"
 	@echo "Targets: x86_64-unknown-linux-gnu, x86_64-pc-windows-gnu, x86_64-apple-darwin"
