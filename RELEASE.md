@@ -2,193 +2,249 @@
 
 This document explains how to create releases for the CommentsCleaner project.
 
-## Automated Releases
+## 🚀 Automated Release Process
 
-### GitHub Actions Workflows
+Releases are **fully automated** through GitHub Actions. Simply push a version tag to trigger the release workflow.
 
-We have two automated release workflows:
-
-#### 1. Tag-based Release (`release.yml`)
-
-Triggered automatically when you push a version tag:
+### Quick Start
 
 ```bash
-git tag v0.1.0
-git push origin v0.1.0
+# 1. Update version in Cargo.toml
+# 2. Commit changes
+git add Cargo.toml
+git commit -m "Bump version to 0.2.0"
+
+# 3. Create and push tag
+git tag v0.2.0
+git push origin main
+git push origin v0.2.0
 ```
 
-This will:
-- Create a GitHub release
-- Build binaries for Linux, Windows, and macOS
-- Upload binaries to the release
-- Optionally publish to crates.io
+**That's it!** GitHub Actions will automatically:
+- ✅ Build Linux x86_64 binary
+- ✅ Build Windows x86_64 binary (GNU toolchain)
+- ✅ Create GitHub Release with version tag
+- ✅ Upload binaries with versioned filenames
+- ✅ (Optional) Publish to crates.io if configured
 
-#### 2. Manual Release (`build-release.yml`)
+### What Gets Built
 
-Can be triggered manually from GitHub Actions tab:
-- Go to Actions → Build and Release → "Run workflow"
-- Specify version and options
-- Choose whether to create GitHub release and/or publish to crates.io
+| Platform | Target | Output |
+|----------|--------|--------|
+| Linux | `x86_64-unknown-linux-gnu` | `cclean-{version}-linux-x86_64` |
+| Windows | `x86_64-pc-windows-gnu` | `cclean-{version}-windows-x86_64.exe` |
 
-## Local Release Scripts
+Example for v0.1.0:
+- `cclean-v0.1.0-linux-x86_64`
+- `cclean-v0.1.0-windows-x86_64.exe`
 
-### Linux/macOS (`release.sh`)
-
-```bash
-# Build and prepare release
-./release.sh -v 0.1.0
-
-# Dry run (show what would be done)
-./release.sh -v 0.1.0 --dry-run
-
-# Build only (no git operations)
-./release.sh -v 0.1.0 --build-only
-
-# Build and publish to crates.io
-./release.sh -v 0.1.0 --publish-cargo
-```
-
-### Windows (`release.ps1`)
-
-```powershell
-# Build and prepare release
-.\release.ps1 -Version 0.1.0
-
-# Dry run
-.\release.ps1 -Version 0.1.0 -DryRun
-
-# Build only
-.\release.ps1 -Version 0.1.0 -BuildOnly
-
-# Build and publish to crates.io
-.\release.ps1 -Version 0.1.0 -PublishCargo
-```
-
-## Release Process
+## 📋 Detailed Release Steps
 
 ### 1. Preparation
 
-1. Update version in `Cargo.toml`
-2. Update `CHANGELOG.md` with release notes
-3. Test the build locally
-4. Ensure all tests pass
+Before creating a release:
+
+1. **Update version** in `Cargo.toml`:
+   ```toml
+   [package]
+   version = "0.2.0"
+   ```
+
+2. **Update CHANGELOG.md** (if exists) with:
+   - New features
+   - Bug fixes
+   - Breaking changes
+   - Notable improvements
+
+3. **Run tests locally**:
+   ```bash
+   cargo test --all-features
+   cargo clippy --all-targets --all-features
+   cargo fmt --check
+   ```
+
+4. **Build and test locally**:
+   ```bash
+   cargo build --release
+   ./target/release/cclean --version
+   ```
 
 ### 2. Create Release
 
-#### Option A: Automated (Recommended)
-
+#### Commit version bump:
 ```bash
-# Create and push tag
-git tag -a v0.1.0 -m "Release version 0.1.0"
-git push origin v0.1.0
-```
-
-GitHub Actions will handle the rest.
-
-#### Option B: Manual with Scripts
-
-```bash
-# Use local script
-./release.sh -v 0.1.0
-
-# Push changes
+git add Cargo.toml CHANGELOG.md
+git commit -m "Release version 0.2.0"
 git push origin main
-git push origin v0.1.0
 ```
 
-### 3. Post-Release
+#### Create and push tag:
+```bash
+# Create annotated tag
+git tag -a v0.2.0 -m "Release version 0.2.0"
 
-1. Verify the GitHub release
-2. Test downloaded binaries
-3. Update documentation if needed
-4. Announce the release
-
-## Configuration
-
-### `release.toml`
-
-Configure release behavior in `release.toml`:
-
-```toml
-[release]
-targets = ["x86_64-unknown-linux-gnu", "x86_64-pc-windows-gnu", "x86_64-apple-darwin"]
-
-[settings]
-auto_create_release = true
-auto_publish_cargo = false
-strip_binaries = true
-create_checksums = true
+# Push tag to trigger release workflow
+git push origin v0.2.0
 ```
+
+### 3. Monitor Release
+
+1. Go to **GitHub Actions** tab
+2. Watch the **Release** workflow
+3. Two parallel jobs will run:
+   - `release (x86_64-unknown-linux-gnu)`
+   - `release (x86_64-pc-windows-gnu)`
+4. Wait for completion (~2-3 minutes)
+
+### 4. Verify Release
+
+1. Go to **Releases** page on GitHub
+2. Check that `v0.2.0` release exists
+3. Verify both binaries are uploaded:
+   - `cclean-v0.2.0-linux-x86_64`
+   - `cclean-v0.2.0-windows-x86_64.exe`
+4. Test download links work
+
+## 🔧 Configuration
+
+### GitHub Actions Workflow
+
+The release workflow is defined in `.github/workflows/release.yml`:
+
+- **Trigger**: Push tags matching `v*` pattern
+- **Platforms**: Linux (Ubuntu), cross-compiles Windows
+- **Build**: Rust stable toolchain
+- **Upload**: softprops/action-gh-release@v1
 
 ### Required Secrets
 
-For automated releases, configure these secrets in GitHub repository settings:
+Configured in GitHub Repository Settings → Secrets:
 
-- `GITHUB_TOKEN`: Automatically provided by GitHub Actions
-- `CRATES_IO_TOKEN`: Optional, for publishing to crates.io
+- `GITHUB_TOKEN`: **Automatically provided** by GitHub Actions (no setup needed)
+- `CRATES_IO_TOKEN`: Optional, only needed if publishing to crates.io
 
-## Build Targets
+### Optional: Publish to crates.io
 
-Currently supported targets:
+To enable automatic publishing to crates.io:
 
-| Target | Platform | Binary Name |
-|--------|----------|-------------|
-| `x86_64-unknown-linux-gnu` | Linux x64 | `cclean-linux-x86_64` |
-| `x86_64-pc-windows-gnu` | Windows x64 | `cclean-windows-x86_64.exe` |
-| `x86_64-apple-darwin` | macOS x64 | `cclean-macos-x86_64` |
+1. Generate token at https://crates.io/me
+2. Add as `CRATES_IO_TOKEN` secret in GitHub
+3. Workflow will automatically publish when tag is pushed
 
-## Release Artifacts
+## 📦 Release Artifacts
 
 Each release includes:
 
-- Compressed binary for each platform
-- `sha256sums.txt` for verification
-- Release notes with installation instructions
+1. **Linux Binary**: Native ELF executable, stripped
+2. **Windows Binary**: PE executable built with mingw-w64
+3. **Release Notes**: Auto-generated from tag message
+4. **Download URLs**: Direct links to each binary
 
-## Troubleshooting
+## ❗ Troubleshooting
 
-### Build Failures
+### Workflow Fails
 
-1. Check Rust toolchain version
-2. Verify target installation: `rustup target add <target>`
-3. Check system dependencies
+**Check workflow logs:**
+```bash
+gh run list --workflow=release.yml --limit 5
+gh run view <run-id> --log
+```
 
-### Release Issues
+**Common issues:**
+- Missing Rust targets: Workflow installs automatically
+- Permission denied: Check `contents: write` permission in workflow
+- Upload fails: Verify `GITHUB_TOKEN` has proper permissions
 
-1. Ensure tag format: `vx.y.z`
-2. Check GitHub Actions permissions
-3. Verify secrets configuration
+### Binary Not Uploaded
 
-### Cargo Publish Issues
+**Symptoms:** Release created but no assets
 
-1. Check `CRATES_IO_TOKEN` is valid
-2. Ensure version number is incremented
-3. Verify `Cargo.toml` is valid
+**Solutions:**
+1. Check workflow logs for "Create Release and Upload" step
+2. Verify file exists in workspace before upload
+3. Check file path matches in workflow
 
-## Versioning
+### Wrong Version Number in Filename
 
-We follow Semantic Versioning:
+**Cause:** Tag name doesn't match expected format
 
-- `MAJOR.MINOR.PATCH`
-- Major: Breaking changes
-- Minor: New features (backward compatible)
-- Patch: Bug fixes (backward compatible)
+**Solution:** Ensure tag follows format `vX.Y.Z` (e.g., `v0.1.0`)
 
-Example: `v0.1.0`, `v0.1.1`, `v0.2.0`
+## 🏷️ Versioning
 
-## Testing Before Release
+We follow [Semantic Versioning](https://semver.org/):
 
-Always test before releasing:
+```
+vMAJOR.MINOR.PATCH
+```
+
+- **MAJOR**: Breaking changes (incompatible API)
+- **MINOR**: New features (backward compatible)
+- **PATCH**: Bug fixes (backward compatible)
+
+Examples:
+- `v0.1.0` - Initial release
+- `v0.1.1` - Bug fix
+- `v0.2.0` - New features
+- `v1.0.0` - Stable release
+
+## 🔄 Rolling Back a Release
+
+If you need to remove a bad release:
 
 ```bash
-# Run full test suite
-cargo test
+# Delete release on GitHub
+gh release delete v0.2.0 --yes
 
-# Build for all targets
-cargo build --release --target x86_64-unknown-linux-gnu
-cargo build --release --target x86_64-pc-windows-gnu
-cargo build --release --target x86_64-apple-darwin
+# Delete tag locally and remotely
+git tag -d v0.2.0
+git push origin :refs/tags/v0.2.0
 
-# Test release script (dry run)
-./release.sh -v 0.1.0 --dry-run
+# Fix issues, then recreate tag
+git tag v0.2.0
+git push origin v0.2.0
 ```
+
+## 📝 Best Practices
+
+1. **Always test before release**: Run full test suite locally
+2. **Use meaningful version numbers**: Follow semantic versioning
+3. **Write clear release notes**: Document what changed
+4. **Monitor workflow**: Watch the GitHub Actions run
+5. **Verify artifacts**: Test downloaded binaries
+6. **Tag annotated**: Use `git tag -a` for better Git history
+
+## 🎯 Quick Reference
+
+```bash
+# Full release workflow
+cargo test && cargo clippy
+# Edit Cargo.toml version
+git add Cargo.toml
+git commit -m "Bump version to X.Y.Z"
+git push origin main
+git tag -a vX.Y.Z -m "Release version X.Y.Z"
+git push origin vX.Y.Z
+
+# View releases
+gh release list
+
+# View specific release
+gh release view vX.Y.Z
+
+# Download release assets
+gh release download vX.Y.Z
+
+# Monitor workflow
+gh run watch
+```
+
+## 🆘 Getting Help
+
+- **Workflow issues**: Check `.github/workflows/release.yml`
+- **Build errors**: Check GitHub Actions logs
+- **General questions**: Open an issue on GitHub
+
+---
+
+**Remember:** The entire release process is automated. Just push a tag and let GitHub Actions do the work!
