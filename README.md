@@ -30,6 +30,16 @@ A powerful command-line tool for automatically removing comments from code in mu
 
 ## Installation
 
+### Install from crates.io (Recommended)
+
+The easiest way to install `comments-cleaner` is using Cargo:
+
+```bash
+cargo install comments-cleaner
+```
+
+This will download, compile, and install the latest version from [crates.io](https://crates.io/crates/comments-cleaner). Make sure you have [Rust](https://www.rust-lang.org/tools/install) installed on your system.
+
 ### Download pre-built binaries
 
 You can download the latest pre-built executable from the [Releases](https://github.com/cyber-tao/comments-cleaner/releases) page.
