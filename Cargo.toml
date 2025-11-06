@@ -1,6 +1,6 @@
 [package]
 name = "comments-cleaner"
-version = "0.1.0"
+version = "0.1.2"
 edition = "2021"
 authors = ["Your Name <your.email@example.com>"]
 description = "A command-line tool for cleaning code comments, supporting multiple programming languages"
