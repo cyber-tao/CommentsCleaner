@@ -213,16 +213,6 @@ The tool uses state machine parsing to correctly handle:
 - Multi-line strings
 - Nested structures
 
-### Important Notes
-
-**Python triple-quoted string handling**:
-
-- All triple-quoted strings (`"""..."""` and `'''...'''`) content will be cleared
-- Replaced with empty string `""` to maintain syntax correctness
-- Including docstrings
-- If code depends on `__doc__` attribute or uses triple quotes to store data, use with caution
-- For detailed information, see: `PYTHON_CLEANUP_DEMO.md`
-
 ## Development
 
 ### Run tests
